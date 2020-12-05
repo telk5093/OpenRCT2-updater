@@ -22,9 +22,9 @@ else:
   flavourId = 1
 
 # Get version information
+print("(1) OpenRCT2 최신 업데이트 정보")
 json_to_fetch = "https://openrct2.org/altapi/?command=get-latest-download&flavourId=" + str(flavourId) + "&gitBranch=develop"
 download(json_to_fetch, "./Updater/temp.json")
-print("(1) OpenRCT2 최신 업데이트 정보")
 
 with open("./Updater/temp.json") as json_file:
   json_data = json.load(json_file)
@@ -53,6 +53,11 @@ binary_zip.close()
 print("(4) 임시 파일 제거")
 os.remove("./Updater/temp.json")
 os.remove(basename)
+
+# Write current version
+f = open('version.txt', mode='wt', encoding='utf-8')
+f.write(str(json_data['downloadId']))
+f.close()
 
 print("")
 
