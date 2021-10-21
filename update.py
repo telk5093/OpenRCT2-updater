@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from urllib import request
+import requests
 import os
 import platform
 import json
@@ -8,26 +8,28 @@ import zipfile
 
 
 def download(url, filename):
-  request.urlretrieve(url, filename)
+	r = requests.get(url)
+	with open(filename, 'wb') as f:
+		f.write(r.content)
 
 def is_os_64bit():
-    return platform.machine().endswith('64')
+	return platform.machine().endswith('64')
 
 # 64bit
 if is_os_64bit():
-  flavourId = 6
+	flavourId = 6
 
 # 32bit
 else:
-  flavourId = 1
+	flavourId = 1
 
 # Get version information
 print("(1) OpenRCT2 최신 업데이트 정보")
 json_to_fetch = "https://openrct2.org/altapi/?command=get-latest-download&flavourId=" + str(flavourId) + "&gitBranch=develop"
-download(json_to_fetch, "./Updater/temp.json")
+download(json_to_fetch, "./temp.json")
 
-with open("./Updater/temp.json") as json_file:
-  json_data = json.load(json_file)
+with open("./temp.json") as json_file:
+	json_data = json.load(json_file)
 
 print("  - 최신 개발 버전: " + str(json_data['downloadId']))
 
@@ -51,7 +53,7 @@ binary_zip.close()
 
 # Remove remnant files
 print("(4) 임시 파일 제거")
-os.remove("./Updater/temp.json")
+os.remove("./temp.json")
 os.remove(basename)
 
 # Write current version
